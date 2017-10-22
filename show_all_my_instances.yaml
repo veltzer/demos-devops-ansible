@@ -1,0 +1,10 @@
+---
+- name: Show all hosts in aws which belong to mark
+  hosts: all
+  
+  tasks:
+    - name: remote facts
+      ec2_facts:
+        filters:
+          instance-state-name: running
+          "tag:Owner": mark@twiggle.com

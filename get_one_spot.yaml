@@ -1,0 +1,48 @@
+---
+- name: Spin up spot instances
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+    - name: set variables
+      set_fact:
+        name: MarksHome
+        spot_price: 4
+        spot_count: 1
+        vpc_subnet_id: subnet-1b54456d
+        security_group_name: default
+        owner: mark@twiggle.com
+        group: CTO
+        activity: development
+        keypair: ec2_instances
+        instance_type: t1.micro
+        region: us-west-2
+        wait: yes # default is no
+
+    - name: create  {{ spot_count }} spot instances with spot_price of ${{ spot_price }}      
+      local_action:
+        module: ec2
+        region: '{{ region }}'
+        spot_price:  '{{ spot_price }}'
+        spot_wait_timeout: 180 # default is 600
+        keypair:  '{{ keypair }}'
+        instance_type: '{{ instance_type }}'
+        image: ami-ccf297fc
+        wait: '{{ wait }}'
+        group: '{{ security_group_name }}'
+        count:  '{{ spot_count }}'
+        vpc_subnet_id: '{{ vpc_subnet_id }}'
+      register: ec2
+
+    - name: Tag instances
+      local_action:
+        module: ec2_tag
+        region: '{{ region }}'
+        state: present
+        resource: '{{ ec2.instances }}'
+        tags:
+          Spot: '{{ spot_price }}'
+          Name: '{{ name }}'
+          Owner: '{{ owner }}'
+          Group: '{{ group }}'
+          Activity: '{{ activity }}'

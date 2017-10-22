@@ -1,0 +1,7 @@
+---
+- name: Show all hosts in aws
+  hosts: all
+
+  tasks:
+    - name: Gather facts
+      ec2_facts:
