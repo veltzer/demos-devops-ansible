@@ -144,7 +144,7 @@ try:
 except ImportError:
     pass
 
-from six.moves import configparser
+import configparser
 from collections import defaultdict
 
 try:
@@ -153,7 +153,7 @@ except ImportError:
     import simplejson as json
 
 
-class Ec2Inventory(object):
+class Ec2Inventory:
 
     def _empty_inventory(self):
         return {"_meta": {"hostvars": {}}}
@@ -231,10 +231,7 @@ class Ec2Inventory(object):
             }
         }
 
-        if six.PY3:
-            config = configparser.ConfigParser()
-        else:
-            config = configparser.SafeConfigParser()
+        config = configparser.ConfigParser()
         ec2_ini_path = os.environ.get('EC2_INI_PATH', defaults['ec2']['ini_path'])
         ec2_ini_path = os.path.expanduser(os.path.expandvars(ec2_ini_path))
 
@@ -404,7 +401,7 @@ class Ec2Inventory(object):
         cache_name = 'ansible-ec2'
         cache_id = self.boto_profile or os.environ.get('AWS_ACCESS_KEY_ID', self.credentials.get('aws_access_key_id'))
         if cache_id:
-            cache_name = '%s-%s' % (cache_name, cache_id)
+            cache_name = '{}-{}'.format(cache_name, cache_id)
         self.cache_path_cache = os.path.join(cache_dir, "%s.cache" % cache_name)
         self.cache_path_index = os.path.join(cache_dir, "%s.index" % cache_name)
         self.cache_max_age = config.getint('ec2', 'cache_max_age')
@@ -496,7 +493,7 @@ class Ec2Inventory(object):
                 instance_filter = instance_filter.strip()
                 if not instance_filter or '=' not in instance_filter:
                     continue
-                filter_key, filter_value = [x.strip() for x in instance_filter.split('=', 1)]
+                filter_key, filter_value = (x.strip() for x in instance_filter.split('=', 1))
                 if not filter_key:
                     continue
                 self.ec2_instance_filters[filter_key].append(filter_value)
@@ -619,7 +616,7 @@ class Ec2Inventory(object):
                 error = self.get_auth_error_message()
             else:
                 backend = 'Eucalyptus' if self.eucalyptus else 'AWS'
-                error = "Error connecting to %s backend.\n%s" % (backend, e.message)
+                error = "Error connecting to {} backend.\n{}".format(backend, e.message)
             self.fail_with_error(error, 'getting EC2 instances')
 
     def get_rds_instances_by_region(self, region):
@@ -1393,7 +1390,7 @@ class Ec2Inventory(object):
                 instance_vars['ec2_previous_state_code'] = instance.previous_state_code
             elif isinstance(value, (int, bool)):
                 instance_vars[key] = value
-            elif isinstance(value, six.string_types):
+            elif isinstance(value, str):
                 instance_vars[key] = value.strip()
             elif value is None:
                 instance_vars[key] = ''
@@ -1501,7 +1498,7 @@ class Ec2Inventory(object):
 
             # Target: Everything
             # Sanitize string values
-            elif isinstance(value, six.string_types):
+            elif isinstance(value, str):
                 host_info[key] = value.strip()
 
             # Target: Everything
@@ -1557,7 +1554,7 @@ class Ec2Inventory(object):
         ''' Reads the inventory from the cache file and returns it as a JSON
         object '''
 
-        with open(self.cache_path_cache, 'r') as f:
+        with open(self.cache_path_cache) as f:
             json_inventory = f.read()
             return json_inventory
 
@@ -1580,9 +1577,9 @@ class Ec2Inventory(object):
 
     def to_safe(self, word):
         ''' Converts 'bad' characters in a string to underscores so they can be used as Ansible groups '''
-        regex = "[^A-Za-z0-9\_"
+        regex = r"[^A-Za-z0-9\_"
         if not self.replace_dash_in_groups:
-            regex += "\-"
+            regex += r"\-"
         return re.sub(regex + "]", "_", word)
 
     def json_format_dict(self, data, pretty=False):
