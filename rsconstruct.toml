@@ -6,3 +6,13 @@ src_dirs = ["."]
 # lint the GitHub Actions workflow files with actionlint
 [processor.actionlint]
 src_dirs = [".github/workflows"]
+
+# ─── markdown ────────────────────────────────────────────────────────────────
+
+[processor.rumdl]
+src_files = ["README.md"]
+
+# ─── yaml ────────────────────────────────────────────────────────────────────
+
+[processor.yamllint]
+src_files = ["get_one_spot.yaml", "show_all_instances.yaml", "show_all_my_instances.yaml"]
