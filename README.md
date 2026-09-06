@@ -1,1 +1,1 @@
-# demos-ansible
+# demos-devops-ansible
