@@ -5,7 +5,7 @@
 reject_dot_src_dirs = true
 
 [processor.taplo]
-src_files = [".rumdl.toml", "rsconstruct.toml"]
+src_files = [".rumdl.toml", "pyproject.toml", "rsconstruct.toml"]
 
 # lint the GitHub Actions workflow files with actionlint
 [processor.actionlint]
