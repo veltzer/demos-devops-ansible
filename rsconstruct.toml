@@ -18,5 +18,5 @@ src_files = ["README.md"]
 
 # ─── yaml ────────────────────────────────────────────────────────────────────
 
-[processor.checker.yamllint]
+[processor.checker.iyamllint]
 src_files = ["get_one_spot.yaml", "show_all_instances.yaml", "show_all_my_instances.yaml"]

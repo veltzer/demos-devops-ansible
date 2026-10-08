@@ -6,7 +6,6 @@ dependencies = []
 
 [dependency-groups]
 dev = [
-    "yamllint",
 ]
 
 [tool.uv]
