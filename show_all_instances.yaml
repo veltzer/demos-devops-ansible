@@ -4,4 +4,4 @@
 
   tasks:
     - name: Gather facts
-      ec2_facts:
+      ec2_facts: {}
